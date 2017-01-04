@@ -1,3 +1,5 @@
+//run webpack-dev-server --content-base dist
+
 module.exports = {
 	entry:'./src/index.js',
 	output:{
