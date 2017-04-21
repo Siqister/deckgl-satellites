@@ -1,5 +1,6 @@
 //run webpack-dev-server --content-base dist
 //https://webpack.github.io/docs/configuration.html
+const path = require('path');
 
 module.exports = {
 	entry:'./src/index.js',
@@ -12,6 +13,14 @@ module.exports = {
 	devServer:{
 		contentBase:'./dist'
 	},
+	
+	resolve: {
+		alias: {
+	  	// From mapbox-gl-js README. Required for non-browserify bundlers (e.g. webpack):
+	  	'mapbox-gl$': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
+		}
+	},
+
 	module:{
 		loaders:[
 			{
@@ -22,7 +31,8 @@ module.exports = {
 				},
 				include:__dirname+'/src'
 			},
-			{test:/\.css$/, loader:"style-loader!css-loader"},
+			{ test: /\.json$/, loader: 'json'},
+			{ test:/\.css$/, loader:"style-loader!css-loader"},
 			{ test: /\.woff(\d+)?$/, loader: 'url?prefix=font/&limit=5000&mimetype=application/font-woff' },
          	{ test: /\.ttf$/, loader: 'file?prefix=font/' },
          	{ test: /\.eot$/, loader: 'file?prefix=font/' },
