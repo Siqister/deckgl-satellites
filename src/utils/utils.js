@@ -1,7 +1,7 @@
 import {csv} from 'd3-request';
 
 const R_EARTH = 6370,
-	P_EARTH = 24*60*60;
+	P_EARTH = 24*60*60; //earth's period, in sec
 
 const config = {
 	MAPBOX_TOKEN: 'pk.eyJ1Ijoic2lxaXpodTAxIiwiYSI6ImNiY2E2ZTNlNGNkNzY4YWYzY2RkMzExZjhkODgwMDc5In0.3PodCA0orjhprHrW6nsuVw'
@@ -50,7 +50,8 @@ const parse = d => {
         semiMajor,
         eccentricity,
         inclination:+d['Inclination (degrees)'],
-        period:+d['Period (minutes)']*60
+        period:+d['Period (minutes)']*60,
+ 		thetaOffset: Math.random()*Math.PI*2
     };
 }
 
@@ -60,13 +61,13 @@ const thetaToR = (theta,_a,_e) => _a*(1- Math.pow(_e,2))/(1 + Math.cos(theta)*_e
 const thetaToDec = (theta,_inc) => Math.sin(theta)*_inc;
 
 const getOrbitPosAt = delta => d => {
-	const theta = (delta%d.period)*Math.PI*2; //rotation in theta around the orbit, in elapsed time delta
-	const lng = (d.lng*Math.PI/180 + (delta/d.period - delta/P_EARTH)*Math.PI*2)%(Math.PI*2);
+	const theta = d.thetaOffset + (delta/d.period)*Math.PI*2; //rotation in theta around the orbit, in elapsed time delta
+	const lng = (d.lng + delta/d.period*360) % 360;
+	//const lng = (d.lng + (delta/d.period - delta/P_EARTH)*360) % 360;
 
 	return Object.assign({},d,{
 		theta,
-		lngLat:[-100,40],
-		//lngLat:[lng, thetaToDec(theta,d.inclination)],
+		lngLat:[lng, thetaToDec(theta,d.inclination)],
 		r:thetaToR(theta,d.semiMajor,d.eccentricity)
 	});
 }

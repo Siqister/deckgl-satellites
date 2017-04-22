@@ -12,13 +12,16 @@ class App extends Component{
 			viewport: Object.assign({},DeckGLOverlay.defaultViewport,{width:500,height:500}),
 			data:null
 		}
+		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
 
 	componentDidMount(){
 	    window.addEventListener('resize', this._resize.bind(this));
 	    this._resize();
-	    this.request = getData('./data/UCS_Satellite_Database_7-1-16.csv',parse)
-	    	.then(map(getOrbitPosAt(3600*12)))
+	    //Issue request, return promise
+	    this.request = getData('./data/UCS_Satellite_Database_7-1-16.csv',parse);
+	    this.request 
+	    	.then(map(getOrbitPosAt(3600*24)))
 	    	.then(this._onDataLoaded.bind(this));
 	}
 
@@ -40,6 +43,23 @@ class App extends Component{
 		this.setState({
 			data:data
 		});
+
+		//Data loaded, enter animation loop
+		window.requestAnimationFrame(this._updateAnimationFrame);
+	}
+
+	_updateAnimationFrame(delta){
+		//On each animation frame, update positions given delta
+		//set state and trigger re-render
+		this.request
+			.then(map(getOrbitPosAt(delta/10)))
+			.then(data => {
+				this.setState({
+					data:data
+				});
+			});
+
+		window.requestAnimationFrame(this._updateAnimationFrame);
 	}
 
 	componentWillUpdate(nextProps, nextState){
@@ -50,19 +70,23 @@ class App extends Component{
 		//const {latitude,longitude,zoom,width,height} = viewport;
 
 		return (
-			<MapGL
-				{...viewport}
-				perspectiveEnabled={true}
-				mapboxApiAccessToken={config.MAPBOX_TOKEN}
-				mapStyle="mapbox://styles/mapbox/satellite-v9"
-				onChangeViewport={this._onChangeViewport.bind(this)}
-			>
-				<DeckGLOverlay
-					viewport = {viewport}
-					data = {data}
+			<div className='app'>
+				<div className='legend'>
+				</div>
+				<MapGL
+					{...viewport}
+					perspectiveEnabled={true}
+					mapboxApiAccessToken={config.MAPBOX_TOKEN}
+					mapStyle="mapbox://styles/siqizhu01/cj1ra4dty000f2slit21dg3cv"
+					onChangeViewport={this._onChangeViewport.bind(this)}
 				>
-				</DeckGLOverlay>
-			</MapGL>
+					<DeckGLOverlay
+						viewport = {viewport}
+						data = {data}
+					>
+					</DeckGLOverlay>
+				</MapGL>
+			</div>
 		);
 	}
 }
