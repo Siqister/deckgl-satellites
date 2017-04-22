@@ -2,8 +2,11 @@ import React,{Component} from 'react';
 import MapGL from 'react-map-gl';
 
 import DeckGLOverlay from './deckgl-overlay';
+import Legend from './components/legend';
 import {config,map,trace,getData,parse,getOrbitPosAt} from './utils/utils';
 
+//For reference: React component lifecycle
+//https://facebook.github.io/react/docs/react-component.html
 
 class App extends Component{
 	constructor(props){
@@ -71,8 +74,9 @@ class App extends Component{
 
 		return (
 			<div className='app'>
-				<div className='legend'>
-				</div>
+				<Legend 
+					data = {data}
+				/>
 				<MapGL
 					{...viewport}
 					perspectiveEnabled={true}
