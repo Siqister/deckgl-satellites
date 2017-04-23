@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
 	entry:'./src/index.js',
 	output:{
-		path:__dirname+'/dist',
+		path:path.join(__dirname,'/dist'),
 		filename:'bundle.js',
 		publicPath:'/assets/'
 	},
@@ -29,7 +29,7 @@ module.exports = {
 				query:{
 					presets:['es2015','react']
 				},
-				include:__dirname+'/src'
+				include:path.join(__dirname,'/src')
 			},
 			{ test: /\.json$/, loader: 'json'},
 			{ test:/\.css$/, loader:"style-loader!css-loader"},

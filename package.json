@@ -1,7 +1,7 @@
 {
-  "name": "webpack-template",
+  "name": "satellites-deckgl",
   "version": "1.0.0",
-  "description": "Template project with webpack and babel set up",
+  "description": "UCS satellites database, visualized with React and Deckgl",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
