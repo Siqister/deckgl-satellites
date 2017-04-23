@@ -66,11 +66,11 @@ class Legend extends Component{
 				<LegendCanvas
 					{...this.state}
 					data={this.props.data}
+					selected={this.props.selected}
 					scale={this._scale}
 				/>
 				<LegendBrush 
 					{...this.state}
-					data={this.props.data}
 					scale={this._scale}
 					selectOrbitRange={this._selectOrbitRange.bind(this)}
 				/>

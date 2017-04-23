@@ -33,7 +33,7 @@ class LegendBrush extends Component{
 
 	shouldComponentUpdate(nextProps,nextState){
 		//Only update if props.width or props.height change, or if props.scale is first instantiated
-		//Ignore changes to props.data or props.margin
+		//Ignore changes to props.margin
 		if(nextProps.width !== this.props.width || 
 			nextProps.height !== this.props.height || 
 			(!this.props.scale && nextProps.scale)){

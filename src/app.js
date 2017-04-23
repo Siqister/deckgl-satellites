@@ -56,10 +56,12 @@ class App extends Component{
 		//On each animation frame, update positions given delta
 		//set state and trigger re-render
 		this.request
-			.then(map(getOrbitPosAt(delta/10)))
+			//.then(map(getOrbitPosAt(delta/10)))
 			.then(data => {
+				const {selected} = this.state;
 				this.setState({
-					data:data
+					data:data.map(getOrbitPosAt(delta/10)),
+					selected:selected.map(getOrbitPosAt(delta/10))
 				});
 			});
 
@@ -93,6 +95,7 @@ class App extends Component{
 					<DeckGLOverlay
 						viewport = {viewport}
 						data = {data}
+						selected = {selected}
 					>
 					</DeckGLOverlay>
 				</MapGL>

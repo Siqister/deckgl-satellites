@@ -12,41 +12,55 @@ class LegendCanvas extends Component{
 		super(props);
 
 		this.ctx = null;
+		this._orbitToXY = this._orbitToXY.bind(this);
 	}
 
-	_redraw(data){
+	_redraw(data,selected){
 		const {width,height,margin,scale} = this.props,
 			ctx = this.ctx,
 			satellites = new Path2D(),
 			orbits = new Path2D(),
-			highlight = new Path2D();
+			selectedSatellites = new Path2D();
 
 		ctx.clearRect(0,0,width,height);
 		ctx.save();
 		ctx.translate(margin.l, margin.t);
 
-		data.forEach(d=>{
-			const _theta = d.theta%(Math.PI*2); //between 0 and 2*PI radians
-			const x = _theta < Math.PI?_theta/Math.PI*(width-margin.l-margin.r):(2-_theta/Math.PI)*(width-margin.l-margin.r);
-			const y = scale(d.r);
-
-			//Draw satellites, orbits, and highlighted satellites with 3x Path2d objects
+		data.map(this._orbitToXY).forEach(d=>{
 			orbits.moveTo(0, scale(d.perigee));
 			orbits.lineTo(width-margin.l-margin.r, scale(d.apogee));
-			satellites.moveTo(x,y);
-			satellites.arc(x,y,2,0,Math.PI*2);
+			satellites.moveTo(d.x,d.y);
+			satellites.arc(d.x,d.y,2,0,Math.PI*2);
 		});
 
-		ctx.fill(satellites);
+		selected.map(this._orbitToXY).forEach(d=>{
+			selectedSatellites.moveTo(d.x,d.y);
+			selectedSatellites.arc(d.x,d.y,2,0,Math.PI*2);
+		});
+
 		ctx.stroke(orbits);
+		ctx.fill(satellites);
+		ctx.fillStyle = 'rgba(255,255,0,.7)';
+		ctx.fill(selectedSatellites);
 		ctx.restore();
 	}
 
+	_orbitToXY(d){
+		//helper function to convert satellite orbital position to xy coordinate on the legend
+		const {width,height,margin,scale} = this.props;
+		const _theta = d.theta%(Math.PI*2); //between 0 and 2*PI radians
+		const x = _theta < Math.PI?_theta/Math.PI*(width-margin.l-margin.r):(2-_theta/Math.PI)*(width-margin.l-margin.r);
+		const y = scale(d.r); 
+
+		return Object.assign({},d,{x,y});
+	}
+
 	componentWillReceiveProps(nextProps){
-		//component will receive latest satellite positions as nextProps.data
+		//component will receive latest satellite positions as nextProps.data...
+		//...as well as latest selection as nextProps.selected
 		//won't re-render component, but will redraw existing <canvas>
 		if(this.ctx && nextProps.data){
-			this._redraw(nextProps.data);
+			this._redraw(nextProps.data, nextProps.selected);
 		}
 	}
 
@@ -63,7 +77,8 @@ class LegendCanvas extends Component{
 
 	shouldComponentUpdate(nextProps,nextState){
 		//Only update if props.width or props.height change, or if props.scale is first instantiated
-		//Ignore changes to props.data or props.margin
+		//Ignore changes to props.margin
+		//Also ignore changes to props.data or props.selected (_redraw rather than re-render)
 		if(nextProps.width !== this.props.width || 
 			nextProps.height !== this.props.height || 
 			(!this.props.scale && nextProps.scale)){
