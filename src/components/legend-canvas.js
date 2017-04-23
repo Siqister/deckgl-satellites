@@ -28,7 +28,7 @@ class LegendCanvas extends Component{
 
 		data.map(this._orbitToXY).forEach(d=>{
 			orbits.moveTo(0, scale(d.perigee));
-			orbits.lineTo(width-margin.l-margin.r, scale(d.apogee));
+			orbits.lineTo(width-margin.l-margin.r, scale(d.apogee)); //FIXME: orbits don't need to be redrawn on each frame
 			satellites.moveTo(d.x,d.y);
 			satellites.arc(d.x,d.y,2,0,Math.PI*2);
 		});

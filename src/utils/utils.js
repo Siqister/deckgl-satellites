@@ -44,7 +44,7 @@ const parse = d => {
         operator:d['Operator/Owner'],
         purpose:d['Purpose'],
         orbitClass:d['Class of Orbit'],
-        lng:+d['Longitude of GEO (degrees)']?+d['Longitude of GEO (degrees)']:Math.random()*360-180,
+        lngOffset:+d['Longitude of GEO (degrees)']?+d['Longitude of GEO (degrees)']:Math.random()*360-180,
         perigee,
         apogee,
         semiMajor,
@@ -57,19 +57,39 @@ const parse = d => {
 
 //Orbit-related math
 //http://www.orbiter-forum.com/showthread.php?t=26682
+//Assumptions:
+//theta tracks the % completion of each orbit; Math.PI*2 == one full orbit
+//theta = 0 ==> orbit perigee (smallest r)
+//theta = Math.PI/2 ==> where orbit crosses equatorial plane
 const thetaToR = (theta,_a,_e) => _a*(1- Math.pow(_e,2))/(1 + Math.cos(theta)*_e);
-const thetaToDec = (theta,_inc) => Math.sin(theta)*_inc;
+const thetaToDec = (theta,_inc) => Math.sin(theta + Math.PI/2)*_inc;
 
 const getOrbitPosAt = delta => d => {
 	const theta = d.thetaOffset + (delta/d.period)*Math.PI*2; //rotation in theta around the orbit, in elapsed time delta
-	const lng = (d.lng + delta/d.period*360) % 360;
-	//const lng = (d.lng + (delta/d.period - delta/P_EARTH)*360) % 360;
+	const lng = (d.lngOffset + delta/d.period*360) % 360;
+	//const lng = (d.lngOffset + delta/d.period*360 - delta/P_EARTH*360) % 360;
+
 
 	return Object.assign({},d,{
 		theta,
 		lngLat:[lng, thetaToDec(theta,d.inclination)], 
 		r:thetaToR(theta,d.semiMajor,d.eccentricity)-R_EARTH //Distance above earth
 	}); 
+}
+
+const getOrbit = N_SUB => d => {
+	return Object.assign({},d,{
+		orbit: Array.from({length:N_SUB+1},(v,i)=>{
+			const theta = (i/N_SUB)*Math.PI*2;
+			const lng = (d.lngOffset + theta/Math.PI*180 + 180)%360 - 180,
+				lat = thetaToDec(theta, d.inclination);
+			return {
+				theta,
+				r: thetaToR(theta+d.thetaOffset,d.semiMajor,d.eccentricity) - R_Earth,
+				lngLat: [lng,lat]
+			};
+		})
+	});
 }
 
 export {config,map,trace,getData,parse,getOrbitPosAt};
