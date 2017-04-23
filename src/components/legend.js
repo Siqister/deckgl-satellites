@@ -1,8 +1,8 @@
 import React,{Component} from 'react';
 import {max,scaleLog} from 'd3';
 
-import Brush from './brush';
-import CanvasLegend from './canvas-legend';
+import LegendBrush from './legend-brush';
+import LegendCanvas from './legend-canvas';
 
 
 const style = {
@@ -14,7 +14,7 @@ const style = {
 	zIndex:999
 };
 
-const margin = {t:50, r:50, b:50, l:50};
+const margin = {t:50, r:50, b:30, l:80};
 
 class Legend extends Component{
 	constructor(props){
@@ -48,6 +48,14 @@ class Legend extends Component{
 		}
 	}
 
+	_selectOrbitRange(range){
+		if(range){
+			this.props.updateSelection( this.props.data.filter(d=>(d.r<range[0]&&d.r>range[1])) );
+		}else{
+			this.props.updateSelection([]);
+		}
+	}
+
 	render(){
 		return (
 			<div 
@@ -55,15 +63,16 @@ class Legend extends Component{
 				style={style}
 				ref='legend'
 			>
-				<Brush 
+				<LegendCanvas
 					{...this.state}
 					data={this.props.data}
 					scale={this._scale}
 				/>
-				<CanvasLegend
+				<LegendBrush 
 					{...this.state}
 					data={this.props.data}
 					scale={this._scale}
+					selectOrbitRange={this._selectOrbitRange.bind(this)}
 				/>
 			</div>
 		)

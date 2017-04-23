@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import MapGL from 'react-map-gl';
 
-import DeckGLOverlay from './deckgl-overlay';
+import DeckGLOverlay from './components/deckgl-overlay';
 import Legend from './components/legend';
 import {config,map,trace,getData,parse,getOrbitPosAt} from './utils/utils';
 
@@ -13,7 +13,8 @@ class App extends Component{
 		super(props);
 		this.state = {
 			viewport: Object.assign({},DeckGLOverlay.defaultViewport,{width:500,height:500}),
-			data:null
+			data:null, //arr of all satellites
+			selected:[] //arr of selected satellites
 		}
 		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
@@ -65,17 +66,22 @@ class App extends Component{
 		window.requestAnimationFrame(this._updateAnimationFrame);
 	}
 
-	componentWillUpdate(nextProps, nextState){
+	_updateSelection(selection){
+		this.setState({
+			selected:selection
+		});
 	}
 
 	render(){
-		const {viewport,data} = this.state;
+		const {viewport,data,selected} = this.state;
 		//const {latitude,longitude,zoom,width,height} = viewport;
 
 		return (
 			<div className='app'>
 				<Legend 
 					data = {data}
+					selected = {selected}
+					updateSelection = {this._updateSelection.bind(this)}
 				/>
 				<MapGL
 					{...viewport}

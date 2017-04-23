@@ -67,9 +67,9 @@ const getOrbitPosAt = delta => d => {
 
 	return Object.assign({},d,{
 		theta,
-		lngLat:[lng, thetaToDec(theta,d.inclination)],
-		r:thetaToR(theta,d.semiMajor,d.eccentricity)
-	});
+		lngLat:[lng, thetaToDec(theta,d.inclination)], 
+		r:thetaToR(theta,d.semiMajor,d.eccentricity)-R_EARTH //Distance above earth
+	}); 
 }
 
 export {config,map,trace,getData,parse,getOrbitPosAt};

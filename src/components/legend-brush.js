@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import {select,axisLeft,brushY,event} from 'd3';
 
-class Brush extends Component{
+class LegendBrush extends Component{
 	constructor(props){
 		super(props);
 
@@ -11,8 +11,9 @@ class Brush extends Component{
 
 	_brushend(){
 		const {scale} = this.props,
-			orbitRange = event.selection.map(scale.invert);
-			console.log(orbitRange);
+			orbitRange = event.selection?event.selection.map(scale.invert):null;
+		
+		this.props.selectOrbitRange(orbitRange); //pass orbit range back up to <Legend>
 	}
 
 	componentDidUpdate(prevProps,prevState){
@@ -86,7 +87,7 @@ class Axis extends Component{
 		const node = this.refs.axis;
 		const axisY = axisLeft()
 			.scale(scale)
-			.tickSize( -(width-margin.l-margin.r))
+			.tickSize(10)
 			.tickValues([1000,10000,100000]);
 		select(node).transition().call(axisY);
 	}
@@ -99,4 +100,4 @@ class Axis extends Component{
 	}
 }
 
-export default Brush;
+export default LegendBrush;
