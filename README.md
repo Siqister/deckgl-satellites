@@ -10,6 +10,20 @@ Because this is a crash course in Deck.gl and React, I decided to start with the
 An important aspect of this visualization is to let the audience observe the motion of different satellite types at different orbital altitudes (LEO for "low-earth", MEO, and GEO). To facilitate this, I created a "focus+context" type structure that lets the user brush and select different orbit types on the left side of the screen, and see changes in 3D space. This structure is also meant to demonstrate how I understood React to handle data flow, state changes, and events, and how `<svg>` and `<canvas>` based viz components can work with React.
 
 ## Technical Notes
-###
+### In `utils/utils.js`
+This module contains a number of utility functions for loading and parsing data, as well as orbit math-related functions that map satellite orbit parameters to orbital positions `[lng, lat, r]`;
+
+### In `app.js`
+The root component has two main responsibilities: requesting data on `componentDidMount`, and updating orbital positions within a `requestAnimationFrame` loop. On each animation frame, `state.data` is reset, triggering the re-render or re-draw of child components.
+
+Because the data feed contains only static orbital parameters for each satellite (as opposed to a stream of orbital positions), `<App>` needs to manually re-compute orbital positions based on elapsed time. 
+
+`<App>` component has 3 child components: `<Tooltip>`, `<DeckGLOverlay>`, and `<Legend>` (which subsequently has `<LegendCanvas>` and `<LegendBrush>` as its child components).
+
+### In `components/deckgl-overlay.js`
+Fairly plain vanilla implementation of deck.gl layers here: two `SatelliteLayer` instances (extending from `ScatterplotLayer`), modelling the satellites, and one `LineLayer` instance modelling the orbits of highlighted satellites. The satellite layers have `onHover` interactivity.
+
+### In `layers/satellite-layer.js`
+A basic extension of the `ScatterplotLayer`, with modified fragmentShader to show a blurry, halo-like edge.
 
 ## Challenges and To-do
