@@ -1,6 +1,19 @@
 import React,{Component} from 'react';
 import {select,axisLeft,brushY,event} from 'd3';
 
+const styleStatic = {
+	line:{
+		fill:'none',
+		stroke:'rgb(200,200,200)',
+		strokeWidth:'2px'
+	},
+	fill:{
+		fill:'rgb(80,80,80)'
+	}
+};
+
+
+
 class LegendBrush extends Component{
 	constructor(props){
 		super(props);
@@ -54,6 +67,21 @@ class LegendBrush extends Component{
 			width={width}
 			height={height}
 		>
+			<g
+				className='static'
+				transform={`translate(${margin.l},${margin.t})`} >
+				<rect 
+					x={0} y={(height-margin.t-margin.b)} width={(width-margin.l-margin.r)} height={margin.b}
+					style={styleStatic.fill}
+				/>
+				<line
+					x1={0} y1={(height-margin.t-margin.b)} x2={(width-margin.l-margin.r)} y2={(height-margin.t-margin.b)}
+					style={styleStatic.line}
+				/>
+				<text dy={-5} y={(height-margin.t-margin.b)}> Distance from earth </text>
+				<text textAnchor='middle' dy={-5}>Perigee</text>
+				<text textAnchor='middle' dy={-5} x={(width-margin.l-margin.r)}>Apogee</text>
+			</g>
 			<Axis 
 				scale={scale}
 				width={width}
@@ -63,7 +91,8 @@ class LegendBrush extends Component{
 			<g 
 				className='brush' 
 				transform={`translate(${margin.l},${margin.t})`}
-				ref='brush'/>
+				ref='brush'
+			/>
 		</svg>)
 	}
 }
@@ -89,7 +118,16 @@ class Axis extends Component{
 		const axisY = axisLeft()
 			.scale(scale)
 			.tickSize(10)
-			.tickValues([1000,10000,100000]);
+			.tickValues([
+				10, //10km above earth, airliners
+				160, //Low earth orbit (LEO)
+				2000, //MEO
+				35786 //GEO + 
+			])
+			.tickFormat(d => {
+				const v = d>1000?Math.round(d/1000)+'K':d;
+				return `${v} km`;
+			})
 		select(node).transition().call(axisY);
 	}
 

@@ -6,16 +6,15 @@ import LegendCanvas from './legend-canvas';
 
 
 const style = {
-	width:'30%',
+	width:'25%',
 	minWidth:'300px',
 	height:'100%',
 	position:'absolute',
-	backgroundColor:'black',
 	borderRight:'1px solid #666',
 	zIndex:999
 };
 
-const margin = {t:50, r:50, b:30, l:80};
+const margin = {t:50, r:50, b:20, l:90};
 
 class Legend extends Component{
 	constructor(props){

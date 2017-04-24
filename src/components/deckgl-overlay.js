@@ -21,8 +21,13 @@ class DeckGLOverlay extends Component{
 		super(props);
 	}
 
+	_onHover(info){
+		console.log(info.x, info.y, JSON.stringify(info.object));
+	}
+
 	render(){
 		const {viewport,data,selected,orbit} = this.props;
+		const onHover = this._onHover.bind(this);
 
 		if(!data) return null;
 
@@ -36,7 +41,8 @@ class DeckGLOverlay extends Component{
 			getPosition: d => [...d.lngLat,d.r*300],
 			getColor: d => [255,255,255,255],
 			getRadius: d => 200,
-		    radiusMinPixels: 0.25
+		    radiusMinPixels: 0.25,
+		    onHover: onHover
 		});
 		const orbitLayer = new LineLayer({
 			id:'orbit-layer',
@@ -53,7 +59,8 @@ class DeckGLOverlay extends Component{
 			getPosition: d => [...d.lngLat,d.r*300],
 			getColor: d => [255,255,0,255],
 			getRadius: d => 350,
-		    radiusMinPixels: 0.25
+		    radiusMinPixels: 0.25,
+		    onHover: onHover
 		}); 
 		const highlightOrbitLayer = new LineLayer({
 			id:'highlight-orbit-layer',
