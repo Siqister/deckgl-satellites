@@ -11,6 +11,7 @@ const style = {
 	height:'100%',
 	position:'absolute',
 	backgroundColor:'black',
+	borderRight:'1px solid #666',
 	zIndex:999
 };
 

@@ -18,8 +18,7 @@ const trace = msg => x => {
 }
 
 //Data import and parse
-const getData = (url,parse) => {
-	return new Promise((resolve,reject) => {
+const getData = (url,parse) => new Promise((resolve,reject) => {
 		csv(url,parse,(err,rows) => {
 			if(err){
 				reject(err);
@@ -28,7 +27,6 @@ const getData = (url,parse) => {
 			}
 		});
 	});
-}
 
 const parse = d => {
 	//Perform some basic orbit-related computations here
@@ -64,32 +62,43 @@ const parse = d => {
 const thetaToR = (theta,_a,_e) => _a*(1- Math.pow(_e,2))/(1 + Math.cos(theta)*_e);
 const thetaToDec = (theta,_inc) => Math.sin(theta + Math.PI/2)*_inc;
 
+//Given elapsed time delta, return function that generates orbital position
 const getOrbitPosAt = delta => d => {
-	const theta = d.thetaOffset + (delta/d.period)*Math.PI*2; //rotation in theta around the orbit, in elapsed time delta
-	const lng = (d.lngOffset + delta/d.period*360) % 360;
-	//const lng = (d.lngOffset + delta/d.period*360 - delta/P_EARTH*360) % 360;
-
+	const theta = d.thetaOffset + (delta/d.period)*Math.PI*2, //rotation in theta around the orbit, in elapsed time delta
+		thetaRelative = (delta/d.period - delta/P_EARTH)*Math.PI*2;
+	
+	const lng = (d.lngOffset + thetaRelative/Math.PI*180 + 180)%360 - 180,
+		lat = thetaToDec(thetaRelative+d.thetaOffset, d.inclination),
+		r = thetaToR(thetaRelative+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH;
 
 	return Object.assign({},d,{
 		theta,
-		lngLat:[lng, thetaToDec(theta,d.inclination)], 
-		r:thetaToR(theta,d.semiMajor,d.eccentricity)-R_EARTH //Distance above earth
+		lngLat:[lng,lat], 
+		r
 	}); 
 }
 
-const getOrbit = N_SUB => d => {
-	return Object.assign({},d,{
-		orbit: Array.from({length:N_SUB+1},(v,i)=>{
-			const theta = (i/N_SUB)*Math.PI*2;
-			const lng = (d.lngOffset + theta/Math.PI*180 + 180)%360 - 180,
-				lat = thetaToDec(theta, d.inclination);
-			return {
-				theta,
-				r: thetaToR(theta+d.thetaOffset,d.semiMajor,d.eccentricity) - R_Earth,
-				lngLat: [lng,lat]
-			};
-		})
-	});
-}
+//Given N_SUB segments, return function that generates orbital vertices
+const getOrbit = N_SUB => d => Array.from({length:N_SUB}, (v,i)=>{
+	const t0 = (i/N_SUB)*Math.PI*2, t1 = (i+1)/N_SUB*Math.PI*2;
+	return {
+		from:{
+			theta:t0,
+			r:thetaToR(t0+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
+			lngLat:[
+				(d.lngOffset + t0/Math.PI*180 + 180)%360 - 180,
+				thetaToDec(t0+d.thetaOffset, d.inclination)
+			]
+		},
+		to:{
+			theta:t1,
+			r:thetaToR(t1+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
+			lngLat:[
+				(d.lngOffset + t1/Math.PI*180 + 180)%360 - 180,
+				thetaToDec(t1+d.thetaOffset, d.inclination)
+			]
+		}
+	}
+});
 
-export {config,map,trace,getData,parse,getOrbitPosAt};
+export {config,map,trace,getData,parse,getOrbitPosAt,getOrbit};

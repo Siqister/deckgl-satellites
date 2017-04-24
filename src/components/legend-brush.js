@@ -6,6 +6,7 @@ class LegendBrush extends Component{
 		super(props);
 
 		this._brush = brushY()
+			.on('brush',this._brushend.bind(this))
 			.on('end',this._brushend.bind(this));
 	}
 

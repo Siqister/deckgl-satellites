@@ -3,7 +3,7 @@ import MapGL from 'react-map-gl';
 
 import DeckGLOverlay from './components/deckgl-overlay';
 import Legend from './components/legend';
-import {config,map,trace,getData,parse,getOrbitPosAt} from './utils/utils';
+import {config, map, trace, getData, parse, getOrbitPosAt, getOrbit} from './utils/utils';
 
 //For reference: React component lifecycle
 //https://facebook.github.io/react/docs/react-component.html
@@ -13,8 +13,9 @@ class App extends Component{
 		super(props);
 		this.state = {
 			viewport: Object.assign({},DeckGLOverlay.defaultViewport,{width:500,height:500}),
-			data:null, //arr of all satellites
-			selected:[] //arr of selected satellites
+			data:null, //array of all satellites
+			selected:[], //array of selected satellites
+			orbit:null //array of orbits
 		}
 		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
@@ -25,7 +26,7 @@ class App extends Component{
 	    //Issue request, return promise
 	    this.request = getData('./data/UCS_Satellite_Database_7-1-16.csv',parse);
 	    this.request 
-	    	.then(map(getOrbitPosAt(3600*24)))
+	    	.then(map(getOrbitPosAt(0)))
 	    	.then(this._onDataLoaded.bind(this));
 	}
 
@@ -45,7 +46,8 @@ class App extends Component{
 
 	_onDataLoaded(data){
 		this.setState({
-			data:data
+			data:data,
+			orbit:data.map(getOrbit(100))
 		});
 
 		//Data loaded, enter animation loop
@@ -75,7 +77,7 @@ class App extends Component{
 	}
 
 	render(){
-		const {viewport,data,selected} = this.state;
+		const {viewport,data,selected,orbit} = this.state;
 		//const {latitude,longitude,zoom,width,height} = viewport;
 
 		return (
@@ -96,6 +98,7 @@ class App extends Component{
 						viewport = {viewport}
 						data = {data}
 						selected = {selected}
+						orbit = {orbit}
 					>
 					</DeckGLOverlay>
 				</MapGL>

@@ -101,8 +101,7 @@ class LegendCanvas extends Component{
 				ref='canvas'
 			>
 			</canvas>
-		)
-
+		);
 	}
 }
 
