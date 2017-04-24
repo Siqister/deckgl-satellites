@@ -27,3 +27,16 @@ Fairly plain vanilla implementation of deck.gl layers here: two `SatelliteLayer`
 A basic extension of the `ScatterplotLayer`, with modified fragmentShader to show a blurry, halo-like edge.
 
 ## Challenges and To-do
+### WebGL!
+I wanted to write a custom layer that would be able to more economically render a 100-point orbit for each satellite. I think I need to really understand how vertex shaders work before I can get further with it.
+
+### Orbital math
+Surprisingly (or perhaps not), modelling orbital motion and projecting them onto a flat map was more of a challenge than I thought. In the end I took some liberties with the math, seeing that astrophysics is not the main point of the exercise. Most notably, I assumed that the satellites would have the same angular velocity around the earth as it orbited, a big distortion for especially elliptical-shaped orbits.
+
+### Instancing
+Each satellite is rendered as a dot, a lost opportunity to express its attributes with instanced geometries. With a little more confidence with vertex and fragment shaders, I'd like to attempt this.
+
+### General design / usability
+This is a pretty basic demo that can obviously benefit from some usability improvements. For example, the `onHover` tooltip interactivity is very jittery at the moment with the satellites moving so fast; a different approach to offer on-demand detail is required.
+
+Thanks! This was a fun challenge!
