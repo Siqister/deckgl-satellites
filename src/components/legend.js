@@ -35,13 +35,6 @@ class Legend extends Component{
 		});
 	}
 
-/*	componentDidUpdate(){
-		this.setState({
-			width:this.refs.legend.clientWidth,
-			height:this.refs.legend.clientHeight
-		});
-	}*/
-
 	componentWillReceiveProps(nextProps){
 		//When props.data is first fetched, mine data for max/min and set scale
 		//This should happen only once
@@ -52,6 +45,15 @@ class Legend extends Component{
 			this._scale = scaleLog()
 				.domain([_max,1])
 				.range([0, height-margin.t-margin.b]);
+		}
+
+		//If viewport changes, set state.width and state.height based on computed width and height
+		//Trigger re-render of child components <LegendCanvas> and <LegendBrush>
+		if(this.props.width !== nextProps.width || this.props.height !== nextProps.height){
+			this.setState({
+				width:this.refs.legend.clientWidth,
+				height:this.refs.legend.clientHeight
+			});
 		}
 	}
 

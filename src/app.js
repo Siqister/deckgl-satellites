@@ -14,8 +14,8 @@ class App extends Component{
 		this.state = {
 			viewport: Object.assign({},DeckGLOverlay.defaultViewport,{width:500,height:500}),
 			data:null, //array of all satellites
-			selected:[], //array of selected satellites
-			orbit:null //array of orbits
+			selected:[], //array of satellites selected via brush
+			orbit:null //array of all satellite orbits
 		}
 		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
@@ -71,6 +71,7 @@ class App extends Component{
 	}
 
 	_updateSelection(selection){
+		//Triggered by child component <Legend>
 		this.setState({
 			selected:selection
 		});
@@ -82,6 +83,7 @@ class App extends Component{
 		return (
 			<div className='app'>
 				<Legend 
+					{...viewport}
 					data = {data}
 					selected = {selected}
 					updateSelection = {this._updateSelection.bind(this)}

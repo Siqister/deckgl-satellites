@@ -64,7 +64,7 @@ class DeckGLOverlay extends Component{
 		}); 
 		const highlightOrbitLayer = new LineLayer({
 			id:'highlight-orbit-layer',
-			data:selected.map(getOrbit).reduce((result,segments)=>result.concat(segments),[]),
+			data:selected.map(getOrbit).reduce((result,segments)=>result.concat(segments),[]), //FIXME: should not reduce on every animation frame, memoize
 			strokeWidth:1,
 			getSourcePosition: d => [...d.from.lngLat, d.from.r*300],
 			getTargetPosition: d => [...d.to.lngLat, d.to.r*300],
