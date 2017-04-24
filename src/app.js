@@ -8,6 +8,7 @@ import Tooltip from './components/tooltip';
 import {config, map, trace, getData, parse, getOrbitPosAt, getOrbit} from './utils/utils';
 
 import './style.css';
+
 //For reference: React component lifecycle
 //https://facebook.github.io/react/docs/react-component.html
 
@@ -27,6 +28,7 @@ class App extends Component{
 	componentDidMount(){
 	    window.addEventListener('resize', this._resize.bind(this));
 	    this._resize();
+	    
 	    //Issue request, return promise
 	    this.request = getData('./data/UCS_Satellite_Database_7-1-16.csv',parse);
 	    this.request 

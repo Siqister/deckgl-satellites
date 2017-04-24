@@ -33,8 +33,8 @@ class LegendBrush extends Component{
 	componentDidUpdate(prevProps,prevState){
 		const {width,height,margin,scale} = this.props;
 
-		//if component is updated with <g.brush> rendered
-		//Implement brush behavior
+		//if component is updated with <g.brush> rendered...
+		//...update brush behavior
 		if(width&&height&&margin&&scale){
 			this._brush
 				.extent([

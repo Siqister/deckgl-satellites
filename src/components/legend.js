@@ -20,7 +20,7 @@ class Legend extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			width:null, //to set the dimensions of children <svg> and <canvas>
+			width:null, //used to set the dimensions of children <svg> and <canvas>
 			height:null,
 			margin:margin
 		}
@@ -64,6 +64,7 @@ class Legend extends Component{
 	}
 
 	_selectOrbitRange(range){
+		//Triggered by <LegendBrush> child component
 		if(range){
 			this.props.updateSelection( this.props.data.filter(d=>(d.r<range[0]&&d.r>range[1])) );
 		}else{

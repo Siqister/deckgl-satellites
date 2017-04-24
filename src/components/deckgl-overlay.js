@@ -4,6 +4,8 @@ import DeckGL, {ScatterplotLayer, LineLayer} from 'deck.gl';
 import SatelliteLayer from '../layers/satellite-layer';
 import {getOrbit} from '../utils/utils';
 
+const Z_FACTOR = 300; //multiplier for altitude elevation of satellites
+
 class DeckGLOverlay extends Component{
 
 	static get defaultViewport(){
@@ -38,7 +40,7 @@ class DeckGLOverlay extends Component{
 			id:'base-layer',
 			data,
 			radiusScale:600,
-			getPosition: d => [...d.lngLat,d.r*300],
+			getPosition: d => [...d.lngLat,d.r*Z_FACTOR],
 			getColor: d => [255,255,255,255],
 			getRadius: d => 200,
 		    radiusMinPixels: 0.25,
@@ -49,15 +51,15 @@ class DeckGLOverlay extends Component{
 			id:'orbit-layer',
 			data:orbit,
 			strokeWidth:1,
-			getSourcePosition: d => [...d.from.lngLat, d.from.r*300],
-			getTargetPosition: d => [...d.to.lngLat, d.to.r*300],
+			getSourcePosition: d => [...d.from.lngLat, d.from.r*Z_FACTOR],
+			getTargetPosition: d => [...d.to.lngLat, d.to.r*Z_FACTOR],
 			getColor: d => [255,255,255,5]
 		});
 		const highlightLayer = new SatelliteLayer({
 			id:'highlight-layer',
 			data:selected,
 			radiusScale:600,
-			getPosition: d => [...d.lngLat,d.r*300],
+			getPosition: d => [...d.lngLat,d.r*Z_FACTOR],
 			getColor: d => [255,255,0,255],
 			getRadius: d => 350,
 		    radiusMinPixels: 0.25,
@@ -68,8 +70,8 @@ class DeckGLOverlay extends Component{
 			id:'highlight-orbit-layer',
 			data:selected.map(getOrbit).reduce((result,segments)=>result.concat(segments),[]), //FIXME: should not reduce on every animation frame, memoize
 			strokeWidth:1,
-			getSourcePosition: d => [...d.from.lngLat, d.from.r*300],
-			getTargetPosition: d => [...d.to.lngLat, d.to.r*300],
+			getSourcePosition: d => [...d.from.lngLat, d.from.r*Z_FACTOR],
+			getTargetPosition: d => [...d.to.lngLat, d.to.r*Z_FACTOR],
 			getColor: d => [255,255,255,50]
 		});
 
