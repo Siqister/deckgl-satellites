@@ -1,10 +1,13 @@
 import React,{Component} from 'react';
+import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
 
 import DeckGLOverlay from './components/deckgl-overlay';
 import Legend from './components/legend';
+import Tooltip from './components/tooltip';
 import {config, map, trace, getData, parse, getOrbitPosAt, getOrbit} from './utils/utils';
 
+import './style.css';
 //For reference: React component lifecycle
 //https://facebook.github.io/react/docs/react-component.html
 
@@ -15,7 +18,8 @@ class App extends Component{
 			viewport: Object.assign({},DeckGLOverlay.defaultViewport,{width:500,height:500}),
 			data:null, //array of all satellites
 			selected:[], //array of satellites selected via brush
-			orbit:null //array of all satellite orbits
+			orbit:null, //array of all satellite orbits
+			tooltip:null
 		}
 		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
@@ -62,8 +66,8 @@ class App extends Component{
 			.then(data => {
 				const {selected} = this.state;
 				this.setState({
-					data:data.map(getOrbitPosAt(delta/10)),
-					selected:selected.map(getOrbitPosAt(delta/10))
+					data:data.map(getOrbitPosAt(delta/5)), //FIXME: hardcoded time constant
+					selected:selected.map(getOrbitPosAt(delta/5))
 				});
 			});
 
@@ -77,8 +81,21 @@ class App extends Component{
 		});
 	}
 
+	_onHover(x,y,obj){
+		//Triggered by child component <DeckGLOverlay>
+		if(obj){
+			this.setState({
+				tooltip:{x,y,obj}
+			});
+		}else{
+			this.setState({
+				tooltip:null
+			});
+		}
+	}
+
 	render(){
-		const {viewport,data,selected,orbit} = this.state;
+		const {viewport,data,selected,orbit,tooltip} = this.state;
 
 		return (
 			<div className='app'>
@@ -100,12 +117,14 @@ class App extends Component{
 						data = {data}
 						selected = {selected}
 						orbit = {orbit}
+						onHover = {this._onHover.bind(this)}
 					>
 					</DeckGLOverlay>
 				</MapGL>
+				<Tooltip d={tooltip}/>
 			</div>
 		);
 	}
 }
 
-export default App;
+render(<App />, document.getElementById('root'));

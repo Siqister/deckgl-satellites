@@ -4,11 +4,26 @@ html,body{
 	margin:0;
 	padding:0;
 }
+h1,h2,h3,h4,p,div,a{
+	margin:0;
+	padding:0;
+}
 body{ background:rgb(20,20,20); }
 #root{
 	width:100%;
 	height:100%;
 }
+
+/*Tooltip*/
+.tooltip{
+	font-family:'Roboto Condensed', sans-serif;
+	color:rgb(20,20,20);
+}
+	.tooltip .entry{ margin:5px 0; }
+	.tooltip .entry .key{
+		font-size:.8em;
+		display:block;
+	}
 
 /*Legend*/
 .legend{ background:rgb(20,20,20); }
