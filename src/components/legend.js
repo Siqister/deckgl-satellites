@@ -50,9 +50,15 @@ class Legend extends Component{
 		//If viewport changes, set state.width and state.height based on computed width and height
 		//Trigger re-render of child components <LegendCanvas> and <LegendBrush>
 		if(this.props.width !== nextProps.width || this.props.height !== nextProps.height){
+			const w = this.refs.legend.clientWidth,
+				h = this.refs.legend.clientHeight,
+				{margin} = this.state;
+
+			if(this._scale) this._scale.range([0, h-margin.t-margin.b]);
+
 			this.setState({
-				width:this.refs.legend.clientWidth,
-				height:this.refs.legend.clientHeight
+				width:w,
+				height:h
 			});
 		}
 	}
