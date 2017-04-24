@@ -28,6 +28,7 @@ class DeckGLOverlay extends Component{
 
 		//See layer lifecycle: https://uber.github.io/deck.gl/#/documentation/getting-started/using-layers?section=available-layers
 		//https://uber.github.io/deck.gl/#/documentation/advanced-topics/layer-lifecycle?section=initialization
+		//FIXME: z attribute calculation is hardcoded
 		const baseLayer = new SatelliteLayer({
 			id:'base-layer',
 			data,
@@ -68,7 +69,7 @@ class DeckGLOverlay extends Component{
 				{...viewport}
 				layers = {[
 					baseLayer,
-					//orbitLayer, /* FIXME: slow!! */
+					//orbitLayer, /* FIXME: slow with >1M path segments, need to figure out more economical way of rendering these */
 					highlightLayer,
 					highlightOrbitLayer
 				]}

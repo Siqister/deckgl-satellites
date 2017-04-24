@@ -110,7 +110,7 @@ const getOrbit = (() => {
 						]
 					}
 				}
-			});
+			}).filter(x => x.from.lngLat[0] <= x.to.lngLat[0]); //Prevent orbit from crossing back
 
 			memo[d.id] = orbitVertices;
 			return orbitVertices;

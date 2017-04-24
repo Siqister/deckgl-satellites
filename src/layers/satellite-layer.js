@@ -10,4 +10,6 @@ class SatelliteLayer extends ScatterplotLayer{
 	}
 }
 
+SatelliteLayer.layerName = 'SatelliteLayer';
+
 export default SatelliteLayer;

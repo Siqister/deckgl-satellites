@@ -36,6 +36,13 @@ class Legend extends Component{
 		});
 	}
 
+/*	componentDidUpdate(){
+		this.setState({
+			width:this.refs.legend.clientWidth,
+			height:this.refs.legend.clientHeight
+		});
+	}*/
+
 	componentWillReceiveProps(nextProps){
 		//When props.data is first fetched, mine data for max/min and set scale
 		//This should happen only once
