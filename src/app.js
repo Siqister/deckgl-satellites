@@ -47,7 +47,7 @@ class App extends Component{
 	_onDataLoaded(data){
 		this.setState({
 			data:data,
-			orbit:data.map(getOrbit(100))
+			orbit:data.map(getOrbit).reduce((result,segments)=>result.concat(segments),[])
 		});
 
 		//Data loaded, enter animation loop
@@ -78,7 +78,6 @@ class App extends Component{
 
 	render(){
 		const {viewport,data,selected,orbit} = this.state;
-		//const {latitude,longitude,zoom,width,height} = viewport;
 
 		return (
 			<div className='app'>

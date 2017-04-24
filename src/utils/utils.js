@@ -36,6 +36,7 @@ const parse = d => {
         eccentricity = (apogee - perigee)/(apogee + perigee + R_EARTH*2);
 
     return {
+    	id:d['NORAD Number'],
         name:d['Name of Satellite, Alternate Names'],
         country:d['Country/Org of UN Registry'],
         countryOperator:d['Country of Operator/Owner'],
@@ -78,27 +79,42 @@ const getOrbitPosAt = delta => d => {
 	}); 
 }
 
-//Given N_SUB segments, return function that generates orbital vertices
-const getOrbit = N_SUB => d => Array.from({length:N_SUB}, (v,i)=>{
-	const t0 = (i/N_SUB)*Math.PI*2, t1 = (i+1)/N_SUB*Math.PI*2;
-	return {
-		from:{
-			theta:t0,
-			r:thetaToR(t0+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
-			lngLat:[
-				(d.lngOffset + t0/Math.PI*180 + 180)%360 - 180,
-				thetaToDec(t0+d.thetaOffset, d.inclination)
-			]
-		},
-		to:{
-			theta:t1,
-			r:thetaToR(t1+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
-			lngLat:[
-				(d.lngOffset + t1/Math.PI*180 + 180)%360 - 180,
-				thetaToDec(t1+d.thetaOffset, d.inclination)
-			]
+//Map satellite datum to array of orbit segments
+//Memoized to minimized repeat computation
+const getOrbit = (() => {
+		let memo = {};
+		const N_SUB = 100;
+
+		return d => {
+			if(d.id in memo){
+				return memo[d.id];
+			}
+
+			const orbitVertices = Array.from({length:N_SUB}, (v,i)=>{
+				const t0 = (i/N_SUB)*Math.PI*2, t1 = (i+1)/N_SUB*Math.PI*2;
+				return {
+					from:{
+						theta:t0,
+						r:thetaToR(t0+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
+						lngLat:[
+							(d.lngOffset + t0/Math.PI*180 + 180)%360 - 180,
+							thetaToDec(t0+d.thetaOffset, d.inclination)
+						]
+					},
+					to:{
+						theta:t1,
+						r:thetaToR(t1+d.thetaOffset, d.semiMajor, d.eccentricity) - R_EARTH,
+						lngLat:[
+							(d.lngOffset + t1/Math.PI*180 + 180)%360 - 180,
+							thetaToDec(t1+d.thetaOffset, d.inclination)
+						]
+					}
+				}
+			});
+
+			memo[d.id] = orbitVertices;
+			return orbitVertices;
 		}
-	}
-});
+})();
 
 export {config,map,trace,getData,parse,getOrbitPosAt,getOrbit};

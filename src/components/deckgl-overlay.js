@@ -37,6 +37,14 @@ class DeckGLOverlay extends Component{
 			getRadius: d => 200,
 		    radiusMinPixels: 0.25
 		});
+		const orbitLayer = new LineLayer({
+			id:'orbit-layer',
+			data:orbit,
+			strokeWidth:1,
+			getSourcePosition: d => [...d.from.lngLat, d.from.r*300],
+			getTargetPosition: d => [...d.to.lngLat, d.to.r*300],
+			getColor: d => [255,255,255,5]
+		});
 		const highlightLayer = new SatelliteLayer({
 			id:'highlight-layer',
 			data:selected,
@@ -48,17 +56,22 @@ class DeckGLOverlay extends Component{
 		}); 
 		const highlightOrbitLayer = new LineLayer({
 			id:'highlight-orbit-layer',
-			data:selected.map(getOrbit(50)).reduce((result,segments)=>result.concat(segments),[]),
+			data:selected.map(getOrbit).reduce((result,segments)=>result.concat(segments),[]),
 			strokeWidth:1,
 			getSourcePosition: d => [...d.from.lngLat, d.from.r*300],
 			getTargetPosition: d => [...d.to.lngLat, d.to.r*300],
-			getColor: d => [255,255,255,20]
+			getColor: d => [255,255,255,50]
 		});
 
 		return (
 			<DeckGL 
 				{...viewport}
-				layers = {[baseLayer,highlightLayer,highlightOrbitLayer]}
+				layers = {[
+					baseLayer,
+					//orbitLayer, /* FIXME: slow!! */
+					highlightLayer,
+					highlightOrbitLayer
+				]}
 			/>
 		);
 	}
