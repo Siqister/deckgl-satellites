@@ -10,11 +10,10 @@ const style = {
 	minWidth:'300px',
 	height:'100%',
 	position:'absolute',
-	borderRight:'1px solid #666',
 	zIndex:999
 };
 
-const margin = {t:50, r:50, b:20, l:90};
+const margin = {t:250, r:50, b:20, l:90};
 
 class Legend extends Component{
 	constructor(props){
@@ -88,6 +87,7 @@ class Legend extends Component{
 				<LegendBrush 
 					{...this.state}
 					scale={this._scale}
+					scaleColor={this.props.scaleColor}
 					selectOrbitRange={this._selectOrbitRange.bind(this)}
 				/>
 			</div>

@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
+import {scaleOrdinal} from 'd3';
 
 import DeckGLOverlay from './components/deckgl-overlay';
 import Legend from './components/legend';
@@ -12,6 +13,15 @@ import './style.css';
 //For reference: React component lifecycle
 //https://facebook.github.io/react/docs/react-component.html
 
+const DEFAULT_COLORS = [
+	[255,255,200],
+	[255,120,0],
+	[0,255,120],
+	[0,120,255],
+	[255,255,0],
+	[0,255,255]
+];
+
 class App extends Component{
 	constructor(props){
 		super(props);
@@ -20,7 +30,8 @@ class App extends Component{
 			data:null, //array of all satellites
 			selected:[], //array of satellites selected via brush
 			orbit:null, //array of all satellite orbits
-			tooltip:null
+			tooltip:null,
+			scaleColor:null 
 		}
 		this._updateAnimationFrame = this._updateAnimationFrame.bind(this);
 	}
@@ -51,9 +62,19 @@ class App extends Component{
 	}
 
 	_onDataLoaded(data){
+		const keys = data.map(d => d.purpose).reduce((unique,key) => {
+			if(unique.indexOf(key)===-1) unique.push(key);
+			return unique;
+		},[]);
+
+		const scaleColor = scaleOrdinal()
+			.domain(keys)
+			.range(DEFAULT_COLORS); //mapping d.purpose to colors
+
 		this.setState({
 			data:data,
-			orbit:data.map(getOrbit).reduce((result,segments)=>result.concat(segments),[])
+			orbit:data.map(getOrbit).reduce((result,segments)=>result.concat(segments),[]),
+			scaleColor:scaleColor
 		});
 
 		//Data loaded, enter animation loop
@@ -97,7 +118,7 @@ class App extends Component{
 	}
 
 	render(){
-		const {viewport,data,selected,orbit,tooltip} = this.state;
+		const {viewport,data,selected,orbit,tooltip,scaleColor} = this.state;
 
 		return (
 			<div className='app'>
@@ -105,6 +126,7 @@ class App extends Component{
 					{...viewport}
 					data = {data}
 					selected = {selected}
+					scaleColor = {scaleColor}
 					updateSelection = {this._updateSelection.bind(this)}
 				/>
 				<MapGL
@@ -119,6 +141,7 @@ class App extends Component{
 						data = {data}
 						selected = {selected}
 						orbit = {orbit}
+						scaleColor = {scaleColor}
 						onHover = {this._onHover.bind(this)}
 					>
 					</DeckGLOverlay>

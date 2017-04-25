@@ -27,20 +27,20 @@ class LegendCanvas extends Component{
 		ctx.translate(margin.l, margin.t);
 
 		data.map(this._orbitToXY).forEach(d=>{
-			orbits.moveTo(0, scale(d.perigee));
-			orbits.lineTo(width-margin.l-margin.r, scale(d.apogee)); //FIXME: orbits don't need to be redrawn on each frame
 			satellites.moveTo(d.x,d.y);
 			satellites.arc(d.x,d.y,2,0,Math.PI*2);
 		});
 
 		selected.map(this._orbitToXY).forEach(d=>{
+			orbits.moveTo(0, scale(d.perigee));
+			orbits.lineTo(width-margin.l-margin.r, scale(d.apogee)); //TODO: orbits don't need to be redrawn on each frame
 			selectedSatellites.moveTo(d.x,d.y);
-			selectedSatellites.arc(d.x,d.y,2,0,Math.PI*2);
+			selectedSatellites.arc(d.x,d.y,5,0,Math.PI*2);
 		});
 
 		ctx.stroke(orbits);
 		ctx.fill(satellites);
-		ctx.fillStyle = 'rgba(255,255,0,.7)';
+		ctx.fillStyle = 'rgba(255,255,255,.7)';
 		ctx.fill(selectedSatellites);
 		ctx.restore();
 	}

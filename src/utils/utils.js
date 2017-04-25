@@ -41,7 +41,7 @@ const parse = d => {
         country:d['Country/Org of UN Registry'],
         countryOperator:d['Country of Operator/Owner'],
         operator:d['Operator/Owner'],
-        purpose:d['Purpose'],
+        purpose:d['Purpose_General'],
         orbitClass:d['Class of Orbit'],
         lngOffset:+d['Longitude of GEO (degrees)']?+d['Longitude of GEO (degrees)']:Math.random()*360-180,
         perigee,

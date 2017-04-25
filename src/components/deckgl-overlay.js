@@ -28,7 +28,7 @@ class DeckGLOverlay extends Component{
 	}
 
 	render(){
-		const {viewport,data,selected,orbit} = this.props;
+		const {viewport,data,selected,orbit,scaleColor} = this.props;
 		const onHover = this._onHover.bind(this);
 
 		if(!data) return null;
@@ -41,8 +41,8 @@ class DeckGLOverlay extends Component{
 			data,
 			radiusScale:600,
 			getPosition: d => [...d.lngLat,d.r*Z_FACTOR],
-			getColor: d => [255,255,255,255],
-			getRadius: d => 200,
+			getColor: d => [...scaleColor(d.purpose),180],
+			getRadius: d => 150,
 		    radiusMinPixels: 0.25,
 		    pickable:true,
 		    onHover: onHover
@@ -60,8 +60,8 @@ class DeckGLOverlay extends Component{
 			data:selected,
 			radiusScale:600,
 			getPosition: d => [...d.lngLat,d.r*Z_FACTOR],
-			getColor: d => [255,255,0,255],
-			getRadius: d => 350,
+			getColor: d => [...scaleColor(d.purpose),255],
+			getRadius: d => 450,
 		    radiusMinPixels: 0.25,
 		    pickable:true,
 		    onHover: onHover
